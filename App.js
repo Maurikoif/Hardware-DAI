@@ -7,6 +7,7 @@ import Home from './src/screens/Home'
 import VideoFavorito from './src/components/Video';
 import About from './src/components/About';
 import Scanner from './src/components/QrCamara';
+import Clima from './src/components/Clima'
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -17,6 +18,7 @@ export default function App() {
         <Stack.Screen name="Video" component={VideoFavorito}/>
         <Stack.Screen name="About" component={About}/>
         <Stack.Screen name="ScanQr"component={Scanner}/>
+        <Stack.Screen name="Clima" component={Clima}/>
         
       </Stack.Navigator>
     </NavigationContainer>
