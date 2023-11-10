@@ -8,6 +8,7 @@ const Home = ({navigation}) => {
         <Button title = "Video" onPress={()=> navigation.navigate('Video')}/>
         <Button title = "IdApp"/>
         <Button title = "Fondo de Pantalla" onPress={() => navigation.navigate('FondoPantalla')}/>
+        <Button title = "Clima" onPress={() => navigation.navigate('Clima')}/>
         
         </>
     )

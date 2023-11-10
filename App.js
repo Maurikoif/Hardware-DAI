@@ -7,6 +7,7 @@ import Home from './src/screens/Home'
 import Videoo from './src/components/Video';
 import VideoFavorito from './src/components/Video';
 import FondoPantalla from './src/components/FondoPantalla';
+import Clima from './src/components/Clima'
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Screen name="Home" component={Home}/>
         <Stack.Screen name="Video" component={VideoFavorito}/>
         <Stack.Screen name="FondoPantalla" component={FondoPantalla}/>
+        <Stack.Screen name="Clima" component={Clima}/>
         
       </Stack.Navigator>
     </NavigationContainer>
