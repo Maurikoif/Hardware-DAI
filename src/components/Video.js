@@ -98,10 +98,11 @@ const styles = StyleSheet.create({
     display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  marginLeft: '67%',
   },
   video: {
     width: '100%',
-    height: 300,
+    height: 400,
   },
 });
 
