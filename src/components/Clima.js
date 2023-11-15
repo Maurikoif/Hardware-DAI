@@ -4,39 +4,45 @@ import * as Location from 'expo-location';
 import axios from 'axios';
 
 const Clima = () => {
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-    const [temperatura, setTemperatura] = useState(null);
-  
-    useEffect(() => {
-      (async () => {
-        if (Platform.OS === 'android' && !Device.isDevice) {
-          setErrorMsg(
-            'Oops, this will not work on Snack in an Android Emulator. Try it on your device!'
-          );
-          return;
-        }
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-          return;
-        }
-  
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
-      })();
-    }, []);
-  
-    useEffect(() => {
-      // Renderizar el componente nuevamente cuando la temperatura cambie
-      // Esto asegurará que la temperatura se muestre siempre que esté disponible
-      if (temperatura) {
-        // Renderizar el componente
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [temperatura, setTemperatura] = useState(null);
+  const [fechaHora, setFechaHora] = useState(null);
+  const [pais, setPais] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS === 'android' && !Device.isDevice) {
+        setErrorMsg(
+          'Oops, this will not work on Snack in an Android Emulator. Try it on your device!'
+        );
+        return;
       }
-    }, [temperatura]);
-  
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+
+      // Obtener la fecha y hora actual
+      const fechaHoraActual = new Date();
+      const fechaHoraFormateada = `${fechaHoraActual.toLocaleDateString()} ${fechaHoraActual.toLocaleTimeString()}`;
+      setFechaHora(fechaHoraFormateada);
+
+      // Obtener el nombre del país
+      const paisData = await axios.get(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&localityLanguage=en`
+      );
+      setPais(paisData.data.countryName);
+    })();
+  }, []);
+
+  useEffect(() => {
     if (location) {
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&appid=b5606a622aaee26d1e6f3b7d32745e7a`;
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&APPID=0cd4c845628a93ee3dd46acea3646046&units=metric`;
       axios
         .get(url)
         .then((response) => {
@@ -47,21 +53,21 @@ const Clima = () => {
           console.error(error);
         });
     }
-  
-    let text = 'Waiting..';
-    if (errorMsg) {
-      text = errorMsg;
-    } else if (location) {
-      text = `Temperatura: ${temperatura}`;
-    }
-  
-    return (
-      <View style={styles.container}>
-        <Text style={styles.paragraph}>{text}</Text>
-      </View>
-    );
-  };
-  
+  }, [location]);
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = `Fecha y Hora: ${fechaHora}\nUbicación: ${pais}\nTemperatura: ${temperatura}`;
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.paragraph}>{text}</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
