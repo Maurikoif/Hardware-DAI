@@ -9,6 +9,8 @@ const Clima = () => {
   const [temperatura, setTemperatura] = useState(null);
   const [fechaHora, setFechaHora] = useState(null);
   const [pais, setPais] = useState(null);
+  const [ciudad, setCiudad] = useState(null);
+  const [barrio, setBarrio] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -32,11 +34,14 @@ const Clima = () => {
       const fechaHoraFormateada = `${fechaHoraActual.toLocaleDateString()} ${fechaHoraActual.toLocaleTimeString()}`;
       setFechaHora(fechaHoraFormateada);
 
-      // Obtener el nombre del país
-      const paisData = await axios.get(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&localityLanguage=en`
-      );
-      setPais(paisData.data.countryName);
+      // Obtener la información detallada de la ubicación
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.coords.latitude}&lon=${location.coords.longitude}&addressdetails=1`;
+      const response = await axios.get(url);
+      const address = response.data.address;
+
+      setPais(address.country);
+      setCiudad(address.city || address.town || address.village || address.hamlet);
+      setBarrio(address.neighbourhood || address.suburb || address.suburb);
     })();
   }, []);
 
@@ -59,7 +64,7 @@ const Clima = () => {
   if (errorMsg) {
     text = errorMsg;
   } else if (location) {
-    text = `Fecha y Hora: ${fechaHora}\nUbicación: ${pais}\nTemperatura: ${temperatura}`;
+    text = `Fecha y Hora: ${fechaHora}\nUbicación: ${pais} ${ciudad}, ${barrio} \nTemperatura: ${temperatura}`;
   }
 
   return (

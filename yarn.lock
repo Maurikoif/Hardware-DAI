@@ -4517,7 +4517,7 @@ expo-camera@~13.4.4:
 
 expo-cli@^6.3.10:
   version "6.3.10"
-  resolved "https://registry.npmjs.org/expo-cli/-/expo-cli-6.3.10.tgz"
+  resolved "https://registry.yarnpkg.com/expo-cli/-/expo-cli-6.3.10.tgz#1cdf2bf3bc6ca7b2a8acb5ec97fbffd67d29ab8e"
   integrity sha512-qe7LOa0UTf/QQmeEtcoom/ujDdANj5XbgCOJuGnB2rGRx+xzReLfLbOrtSfb/2BM3rKHKGmmL940pyUq6f3ncg==
   dependencies:
     "@babel/runtime" "7.9.0"
