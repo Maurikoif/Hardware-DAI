@@ -1,0 +1,2 @@
+Emergencia: no entra al use effect desde emergencia a home
+Contactos: Ver error

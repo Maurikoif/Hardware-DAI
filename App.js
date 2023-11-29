@@ -8,10 +8,13 @@ import VideoFavorito from './src/components/Video';
 import About from './src/components/About';
 import Scanner from './src/components/QrCamara';
 import Clima from './src/components/Clima'
+import Contactos from './src/components/Contactos';
+import Emergencia from './src/components/Emergencia'
 
 export default function App() {
   const Stack = createNativeStackNavigator();
   return (
+    
     <NavigationContainer>
       <Stack.Navigator initialRouteName = "Home">
         <Stack.Screen name="Home" component={Home}/>
@@ -19,8 +22,12 @@ export default function App() {
         <Stack.Screen name="About" component={About}/>
         <Stack.Screen name="ScanQr"component={Scanner}/>
         <Stack.Screen name="Clima" component={Clima}/>
+        <Stack.Screen name="Contactos" component={Contactos}/>
+        
+        <Stack.Screen name="Emergencia" component={Emergencia}/>
         
       </Stack.Navigator>
+      
     </NavigationContainer>
     
   );
