@@ -3,45 +3,47 @@ import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Accelerometer } from 'expo-sensors';
 import * as Linking from 'expo-linking';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const Home = ({navigation}) => {
     const [numeroEmergencia, setNumeroEmergencia] = useState('');
 
-    useEffect(() => {
-        
+    
+    useFocusEffect(     
+      useCallback(() => {
+        let isActive = true;
         const fetchNumero = async () => {
             try {
                 const value = await AsyncStorage.getItem('numeroEmergencia');
+                
                 if (value) {
                   setNumeroEmergencia(value);
                 }
               } catch (error) {
-                console.log("Error retrieving emergency number:", error);
+                alert("Error retrieving emergency number:", error);
               }
             }
         fetchNumero()
-  
-      const subscription = Accelerometer.addListener(handleShake);
+        
+      const subscription = Accelerometer.addListener(handleShake)
       return () => {
         subscription.remove();
-        console.log("asdjsjd", numeroEmergencia)
-      };
-    }, []);
+        isActive = false;
+      }
+      },[numeroEmergencia]))
     
       const handleShake = ({ x, y, z }) => {
-        // Detecta una sacudida basada en los valores del acelerómetro
+        
         const acceleration = Math.sqrt(x * x + y * y + z * z);
-        if (acceleration > 2.5) { // Puedes ajustar este umbral según sea necesario
+        if (acceleration > 5) { 
           sendWhatsAppMessage();
         }
       };
     
       const sendWhatsAppMessage = async () => {
-        console.log(numeroEmergencia)
+        
         try {
-          // Obtiene el número de emergencia almacenado
-          
-    
           if (numeroEmergencia) {
             Vibration.vibrate();
             const message = "¡Emergencia! Necesito ayuda.";
@@ -50,10 +52,11 @@ const Home = ({navigation}) => {
             // Abre el enlace en WhatsApp
             Linking.openURL(whatsappLink);
           } else {
-            console.log("Número de emergencia no válido");
+            console.log("oasldkoasd", numeroEmergencia)
+            alert("Número de emergencia no válido");
           }
         } catch (error) {
-          console.error("Error al enviar mensaje de WhatsApp:", error);
+          alert("Error al enviar mensaje de WhatsApp:", error);
         }
       };
     return(

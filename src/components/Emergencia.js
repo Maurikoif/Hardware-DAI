@@ -2,65 +2,70 @@ import { useState, useEffect } from 'react'
 import { Button, Text, TextInput } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Emergencia = ({navigation}) => {
-    const [numeroEmergencia, setNumeroEmergencia] = useState('')
-   
+const Emergencia = ({ navigation }) => {
+  const [numeroEmergencia, setNumeroEmergencia] = useState('')
+
+
+ 
 
     useEffect(() => {
-        console.log('Propiedad navigation:', navigation);
-        // Use AsyncStorage.getItem inside useEffect to retrieve the value
-        const fetchNumero = async () => {
-        try {
-            const value = await AsyncStorage.getItem('numeroEmergencia');
-            if (value) {
-              setNumeroEmergencia(value);
-            }
-          } catch (error) {
-            console.log("Error retrieving emergency number:", error);
+    const fetchNumero = async () => {
+      try {
+          const value = await AsyncStorage.getItem('numeroEmergencia');
+          if (value) {
+            setNumeroEmergencia(value);
           }
-        }
-          fetchNumero()
-    }, []);
-
-
-    const handleChange = (number) => {
-        if (validarTelefono(number) == true) {
-            setNumeroEmergencia(number)
-            console.log('Numero Valido', number);
-        }
-
-
-    };
-
-    const validarTelefono = (numeroEmergencia) => {
-        const re = /^\+?[0-9]{1,15}$/;
-        return re.test(numeroEmergencia);
-    };
-
-    const handleGuardar = async () => {
-        try {
-          await AsyncStorage.setItem('numeroEmergencia', numeroEmergencia);
-          console.log('Número de emergencia guardado con éxito');
-          navigation.navigate('Home')
         } catch (error) {
-          console.error('Error al guardar el número de emergencia:', error);
+          alert("Error retrieving emergency number:", error);
         }
+      }
+  fetchNumero()
+  },[])
+
+
+  const handleChange = (number) => {
+
+    setNumeroEmergencia(number)
+
+  };
+
+  const validarTelefono = (number) => {
+    const re = /^\+?[0-9]{1,15}$/;
+    return re.test(number);
+
+  };
+
+  const handleGuardar = async () => {
+    if (validarTelefono(numeroEmergencia) == true && numeroEmergencia.length == 14 && numeroEmergencia.charAt(0) == "+") {
+      try {
+
+        await AsyncStorage.setItem('numeroEmergencia', numeroEmergencia);
         
-      };
-    
+        alert("Numero de Emergencia Guardado")
+        navigation.navigate('Home')
 
-    return (
-        <>
-            <Text>Configurar Numero de Emergencia</Text>
-            <Text>Numero Emergencia Actual : {numeroEmergencia}</Text>
-            <TextInput
+      } catch (error) {
+        alert('Error al guardar el número de emergencia:');
+      }
+    }
+    else{
+      alert('Error al guardar el número de emergencia:  Debe tener 14 digitos y empezar con +');
+    }
+  };
 
-                placeholder="Ingrese un numero de Emergencia"
-                onChangeText={(number) => handleChange(number)}
-            />
-            <Button title="Guardar" onPress={handleGuardar} />
-        </>
-    )
+
+  return (
+    <>
+      <Text>Configurar Numero de Emergencia</Text>
+      <Text>Numero Emergencia Actual : {numeroEmergencia}</Text>
+      <TextInput
+
+        placeholder="Ingrese un numero de Emergencia"
+        onChangeText={(number) => handleChange(number)}
+      />
+      <Button title="Guardar" onPress={handleGuardar} />
+    </>
+  )
 }
 
 export default Emergencia

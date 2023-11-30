@@ -1,2 +1,3 @@
-Emergencia: no entra al use effect desde emergencia a home
-Contactos: Ver error
+Emergencia: ya etsa
+Contactos: Listo? (En el celular de gabi no anda)
+Clima: Queme la APi je

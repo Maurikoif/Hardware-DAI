@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import * as Contacts from 'expo-contacts';
 import {
     SafeAreaView,
@@ -8,15 +8,28 @@ import {
     Text,
     StatusBar,
 } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
-//Falta mostrar contacto de emergencia
 
 const Contactos = () => {
     const [contactos, setContactos] = useState([{}])
     const [ numeroEmergencia, setNumeroEmergencia] = useState('')
 
-    useEffect(() => {
-        (async () => {
+    const getNumeroEmergencia = async () => {
+        try {
+            const value = await AsyncStorage.getItem('numeroEmergencia');
+            
+            if (value) {
+                return value
+            }
+        } catch (error) {
+            alert("Error retrieving emergency number:", error);
+        }
+    }
+    const requestPermissionsAsync = async () => {
+        try {
             const { status } = await Contacts.requestPermissionsAsync();
             if (status === 'granted') {
                 const { data } = await Contacts.getContactsAsync({
@@ -25,25 +38,51 @@ const Contactos = () => {
                         Contacts.Fields.LastName,
                         Contacts.Fields.PhoneNumbers,
                     ],
-                })
-
-                setContactos(data)
+                });
+                
+                return data
             }
-        })();
-    }, []);
+        } catch (error) {
+            alert("Error retrieving contacts:", error);
+        }
+    };
 
-    const Item = ({ Name, LastName, PhoneNumbers }) => (
+    
+
+
+    
+    
+    useFocusEffect(
+        
+        useCallback(() => {
+            const fetchData = async () => {
+                try {
+                    setNumeroEmergencia(await getNumeroEmergencia());
+                    setContactos(await requestPermissionsAsync());
+                } catch (error) {
+                    console.error('Error en fetchData:', error);
+                }
+            };
+            
+            fetchData();        
+        },[]))
+
+    const Item = ({ Name, LastName, PhoneNumbers}) => (
+        
         Name != '' ? (
-        <View >
+        <View style={styles.container} >
 
             <Text style={styles.Name}>
-                {Name} {LastName}
+                Nombre: {Name} {LastName}
             </Text>
             {PhoneNumbers.map((p) =>
-                p.number === numeroEmergencia ? ( <Text style={styles.NumeroEmergencia}>{p.number}</Text>  ) : <Text >{p.number}</Text> 
-             
-                
+                p.number === numeroEmergencia ? ( 
+                <Text style={styles.NumeroEmergencia} key={p.id}> {p.number}</Text>  
+                ) : (
+                    <Text key={p.id} >{p.number} </Text>
+                )
             )}
+            <Text> ----------------------------- </Text>
         </View>): null
     );
 
@@ -52,12 +91,13 @@ const Contactos = () => {
         <Text style={styles.Titulo}>Lista de Contactos</Text>
             <FlatList
                 data={contactos}
-                renderItem={({ item}) =>
+                renderItem={({item}) =>
                     <Item
                         Name={item.firstName ?? ''}
                         LastName={item.lastName ?? ''}
                         PhoneNumbers={item.phoneNumbers ?? []} 
-                        key={item.id}/>}
+                        key={item.id}
+                        />}
 
             />
         </>
@@ -76,5 +116,13 @@ const styles = StyleSheet.create({
     },
     NumeroEmergencia:{
         backgroundColor: "red",
-    }
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 1,
+      },
+    
 })
